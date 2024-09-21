@@ -1,3 +1,60 @@
 1.
+
+
+1.1
 If a language model is built from the data/speech/switchboard-small corpus, using add-0.01 smoothing and a vocab threshold of 3, what is the model’s perplexity per word on each of the three sample ﬁles?
-./build_vocab.py ../data/gen_spam/train/{gen,spam} --threshold 3 --output vocab-genspam.txt
+./build_vocab.py  ../data/speech/train/switchboard-small  --threshold 3 --output vocab-speech.txt
+./train_lm.py vocab-speech.txt add_lambda --lambda 0.01 ../data/speech/train/switchboard-small
+ln -s corpus=switchboard-small~vocab=vocab-speech.txt~smoother=add_lambda~lambda=0.01.model model_Q1
+./fileprob.py model_Q1 ../data/speech/sample1
+./fileprob.py model_Q1 ../data/speech/sample2
+./fileprob.py model_Q1 ../data/speech/sample3
+
+Here are the results:
+-8282.07        ../data/speech/sample1
+Overall cross-entropy:  7.85052 bits per token
+-5008.97        ../data/speech/sample2
+Overall cross-entropy:  8.30622 bits per token
+-5085.45        ../data/speech/sample3
+Overall cross-entropy:  8.29012 bits per token
+
+As a result,
+the perplexity per word of sample 1 is 2**7.85052=230.803
+the perplexity per word of sample 2 is 2**8.30622=316.534
+the perplexity per word of sample 3 is 2**8.29012=313.021
+
+
+1.2
+What happens to the log2-probabilities and perplexities if you train instead on the larger switchboard corpus? Why?
+./train_lm.py vocab-speech.txt add_lambda --lambda 0.01 ../data/speech/train/switchboard
+ln -s corpus=switchboard~vocab=vocab-speech.txt~smoother=add_lambda~lambda=0.01.model model_Q1_2
+./fileprob.py model_Q1_2 ../data/speech/sample1
+./fileprob.py model_Q1_2 ../data/speech/sample2
+./fileprob.py model_Q1_2 ../data/speech/sample3
+
+The results are
+-6819.01        ../data/speech/sample1
+Overall cross-entropy:  6.46370 bits per token
+-4192.79        ../data/speech/sample2
+Overall cross-entropy:  6.95278 bits per token
+-4195.7 ../data/speech/sample3
+Overall cross-entropy:  6.83969 bits per token
+
+As a result,
+the perplexity per word of sample 1 is 2**6.46370=88.260
+the perplexity per word of sample 2 is 2**6.95278=123.878
+the perplexity per word of sample 3 is 2**6.83969=114.538
+
+We can clearly see that the perplexity per word decreases a lot no matter on sample1, sample2 or sample3.
+The reason is obvious:
+We our LM is trained on a large corpus, it has a better understanding of our language. As a result, when it sees new languages, it is less perplexed.
+
+
+
+
+2.
+
+
+2-1.
+
+

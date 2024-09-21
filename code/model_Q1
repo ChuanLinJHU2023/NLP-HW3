@@ -1,0 +1,1 @@
+corpus=switchboard-small~vocab=vocab-speech.txt~smoother=add_lambda~lambda=0.01.model
